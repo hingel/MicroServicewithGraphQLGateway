@@ -1,0 +1,15 @@
+version: '3.4'
+
+services:
+  service.api:
+    image: ${DOCKER_REGISTRY-}serviceapi
+    build:
+      context: .
+      dockerfile: MicroServices/APIs/Service/Service.Api/Dockerfile
+
+  user.api:
+    image: ${DOCKER_REGISTRY-}userapi
+    build:
+      context: .
+      dockerfile: MicroServices/APIs/User/User.Api/Dockerfile
+
