@@ -34,7 +34,8 @@ public class UserService(UserDbContext context) : IUserService
 
         if (request.AddressRequest != null)
         {
-            userToUpdate.Address = new Address(request.AddressRequest.Street, request.AddressRequest.City, request.AddressRequest.PostalCode, request.AddressRequest.Country)
+            userToUpdate.Address = new Address(request.AddressRequest.Street, request.AddressRequest.City,
+                request.AddressRequest.PostalCode, request.AddressRequest.Country);
         }
 
         userToUpdate.ServiceModelIds.Add(request.ServiceModelId.GetValueOrDefault());
@@ -46,8 +47,6 @@ public class UserService(UserDbContext context) : IUserService
 
     public Task<Address[]> GetAddress(string query)
     {
-        //Detta kan säkert göras bättre alltså
-
         var addressToReturn = context.Addresses.Where(a =>
             a.City.ToLower().Contains(query.ToLower()) 
             || a.Street.ToLower().Contains(query.ToLower())

@@ -21,6 +21,6 @@ if (app.Environment.IsDevelopment())
 
 app.MapPost("/", async (ServiceRequest request, IServiceService service) => await service.AddServiceModel(request));
 
-app.MapGet("/", async (IServiceService service, Guid[] ids) => await service.GetServiceModels(ids));
+app.MapGet("/", async (IServiceService service, string[] ids) => await service.GetServiceModels(ids.Select(Guid.Parse).ToArray()));
 
 app.Run();

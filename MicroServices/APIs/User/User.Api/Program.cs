@@ -24,8 +24,8 @@ if (app.Environment.IsDevelopment())
 
 app.MapPost("/", async (AddUserRequest request, IUserService service) => await service.AddUser(request));
 
-app.MapGet("/", async (IUserService service, string[] ids) => await service.GetUsers(ids.Select(id => Guid.Parse(id)).ToArray()));
+app.MapGet("/GetUsers", async (IUserService service, string[] ids) => await service.GetUsers(ids.Select(Guid.Parse).ToArray()));
 
-app.MapGet("/addresses", async (IUserService service, string query) => await service.GetAddress(query));
+app.MapGet("/addresses/{query}", async (IUserService service, string query) => await service.GetAddress(query));
 
 app.Run();

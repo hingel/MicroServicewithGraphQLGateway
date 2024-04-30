@@ -1,6 +1,4 @@
-﻿using System.Collections.ObjectModel;
-
-namespace User.Db.Model;
+﻿namespace User.Db.Model;
 
 public class User(string name, Address address)
 {
