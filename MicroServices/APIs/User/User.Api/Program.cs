@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using User.Api.Request;
+using User.Api.Services;
 using User.Db.Database;
-using User.Db.Model;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,8 @@ var connectionString = builder.Configuration.GetConnectionString("MysqlConnectio
 builder.Services.AddDbContext<UserDbContext>(options => 
     options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
         .LogTo(Console.WriteLine, LogLevel.Information));
+
+builder.Services.AddScoped<IUserService, UserService>();
 
 var app = builder.Build();
 
@@ -19,17 +22,10 @@ if (app.Environment.IsDevelopment())
     await context.Database.EnsureCreatedAsync();
 }
 
-app.MapPost("/{name}", async (string name, UserDbContext context) =>
-{
-    var newUser = new User.Db.Model.User(name, new Address("Gatan 1", "Gbg", "12345", "Sweden"));
+app.MapPost("/", async (AddUserRequest request, IUserService service) => await service.AddUser(request));
 
-    context.Users.Add(newUser);
-    await context.SaveChangesAsync();
+app.MapGet("/GetUsers", async (IUserService service, string[] ids) => await service.GetUsers(ids.Select(Guid.Parse).ToArray()));
 
-    return "UserAdded";
-});
-
-app.MapGet("/", async (UserDbContext context) => await context.Users.Include(u => u.Address).ToListAsync());
-app.MapGet("/addresses", async (UserDbContext context) => await context.Addresses.ToListAsync());
+app.MapGet("/addresses/{query}", async (IUserService service, string query) => await service.GetAddress(query));
 
 app.Run();
