@@ -12,7 +12,9 @@ builder.Services.AddDbContext<ServiceDbContext>(options => options.UseMySql(conn
 builder.Services.AddScoped<IServiceService, ServiceModelService>();
 
 builder.Services.AddGraphQLServer()
-    .AddQueryType<ServiceQuery>();
+    .AddQueryType<ServiceQuery>()
+    .InitializeOnStartup()
+    .PublishSchemaDefinition(s => s.SetName("services"));
 
 var app = builder.Build();
 

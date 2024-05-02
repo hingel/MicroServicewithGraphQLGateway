@@ -3,8 +3,23 @@ version: '3.4'
 networks:
   user:
   service:
+  gateway:
 
 services:
+  graphql.gw:
+    image: ${DOCKER_REGISTRY-}graphqlgw
+    build:
+      context: .
+      dockerfile: MicroServices/Gateway/GraphQL.GW/Dockerfile
+    ports:
+      - "5005:8080"
+      - "5005:8081"
+    depends_on:
+      - user.api
+      - service.api
+    networks:
+      - gateway
+
   service.api:
     image: ${DOCKER_REGISTRY-}serviceapi
     build:
@@ -14,6 +29,10 @@ services:
       - service.db
     networks:
       - service
+      - gateway
+    ports:
+      - 53016:8080
+      - 53017:8081
   
   service.db:
     container_name: servicedb
@@ -38,6 +57,10 @@ services:
       - user.db
     networks: 
       - user
+      - gateway
+    ports:
+      - 53018:8080
+      - 53019:8081
 
   user.db:
     container_name: userdb 
@@ -52,3 +75,6 @@ services:
     restart: always
     ports:
       - "3306:3306"
+
+
+

@@ -15,7 +15,9 @@ builder.Services.AddDbContext<UserDbContext>(options =>
 builder.Services.AddScoped<IUserService, UserService>();
 
 builder.Services.AddGraphQLServer()
-    .AddQueryType<UserQuery>();
+    .AddQueryType<UserQuery>()
+    .InitializeOnStartup()
+    .PublishSchemaDefinition(s => s.SetName("users"));
 
 var app = builder.Build();
 
