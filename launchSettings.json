@@ -5,7 +5,8 @@
       "commandVersion": "1.0",
       "serviceActions": {
         "service.api": "StartDebugging",
-        "user.api": "StartDebugging"
+        "user.api": "StartDebugging",
+        "graphql.gw": "StartDebugging"
       }
     }
   }

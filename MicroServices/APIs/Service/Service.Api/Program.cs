@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using Service.Api.Query;
 using Service.Api.Requests;
 using Service.Api.Services;
 using Service.Db.Database;
@@ -10,6 +11,11 @@ var connectionString = builder.Configuration.GetConnectionString("MysqlConnectio
 builder.Services.AddDbContext<ServiceDbContext>(options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 builder.Services.AddScoped<IServiceService, ServiceModelService>();
 
+builder.Services.AddGraphQLServer()
+    .AddQueryType<ServiceQuery>()
+    .InitializeOnStartup()
+    .PublishSchemaDefinition(s => s.SetName("services"));
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -20,7 +26,8 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapPost("/", async (ServiceRequest request, IServiceService service) => await service.AddServiceModel(request));
-
 app.MapGet("/", async (IServiceService service, string[] ids) => await service.GetServiceModels(ids.Select(Guid.Parse).ToArray()));
+
+app.MapGraphQL();
 
 app.Run();
