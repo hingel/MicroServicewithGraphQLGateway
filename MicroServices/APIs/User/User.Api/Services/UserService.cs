@@ -26,6 +26,9 @@ public class UserService(UserDbContext context) : IUserService
         return await context.Users.Include(u => u.Address).Where(u => ids.Contains(u.Id)).ToArrayAsync();
     }
 
+    public async Task<Db.Model.User?> GetUser(Guid id) =>
+        await context.Users.Include(u => u.Address).FirstOrDefaultAsync(u => u.Id == id);
+
     public async Task<Db.Model.User?> UpdateUser(UpdateUserRequest request)
     {
         var userToUpdate = await context.Users.Include(u => u.Address).FirstOrDefaultAsync(u => u.Id == request.UserId);
@@ -38,7 +41,7 @@ public class UserService(UserDbContext context) : IUserService
                 request.AddressRequest.PostalCode, request.AddressRequest.Country);
         }
 
-        userToUpdate.ServiceModelIds.Add(request.ServiceModelId.GetValueOrDefault());
+        userToUpdate.ServiceModelId = request.ServiceModelId.GetValueOrDefault();
         userToUpdate.Name = !string.IsNullOrEmpty(request.Name) ? request.Name : userToUpdate.Name;
 
         await context.SaveChangesAsync();

@@ -9,7 +9,7 @@ public class User(string name, Address address)
     public Guid Id { get; } = Guid.NewGuid(); //Borde nog skickas med i meddelandet som skapar den
     public string Name { get; set; } = name;
     public Address Address { get; set; } = address;
-    public List<Guid> ServiceModelIds { get; } = new();
+    public Guid? ServiceModelId { get; set; } = Guid.NewGuid();
 }
 
 public record Address(string Street, string City, string PostalCode, string Country)

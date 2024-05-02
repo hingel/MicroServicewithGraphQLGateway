@@ -12,9 +12,11 @@ builder.Services.AddDbContext<ServiceDbContext>(options => options.UseMySql(conn
 builder.Services.AddScoped<IServiceService, ServiceModelService>();
 
 builder.Services.AddGraphQLServer()
-    .AddQueryType<ServiceQuery>()
+    .AddQueryType<Query>()
     .InitializeOnStartup()
-    .PublishSchemaDefinition(s => s.SetName("services"));
+    .PublishSchemaDefinition(s => 
+        s.SetName("services")
+            .AddTypeExtensionsFromFile("./Stitching.graphql"));
 
 var app = builder.Build();
 
@@ -26,7 +28,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapPost("/", async (ServiceRequest request, IServiceService service) => await service.AddServiceModel(request));
-app.MapGet("/", async (IServiceService service, string[] ids) => await service.GetServiceModels(ids.Select(Guid.Parse).ToArray()));
+app.MapGet("/", async (IServiceService service, string[] ids) => await service.GetServiceModelsByIds(ids.Select(Guid.Parse).ToArray()));
 
 app.MapGraphQL();
 
