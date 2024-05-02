@@ -2,7 +2,7 @@
 
 public class User(string name, Address address)
 {
-    public User(string name) : this(name, null!)
+    public User(string name) : this(name, null!) //Försök dubbelkolla om detta är relevant?
     {
     }
 
