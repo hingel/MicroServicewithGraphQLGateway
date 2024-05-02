@@ -27,9 +27,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapPost("/", async (AddUserRequest request, IUserService service) => await service.AddUser(request));
-
 app.MapGet("/GetUsers", async (IUserService service, string[] ids) => await service.GetUsers(ids.Select(Guid.Parse).ToArray()));
-
 app.MapGet("/addresses/{query}", async (IUserService service, string query) => await service.GetAddress(query));
 
 app.MapGraphQL();
