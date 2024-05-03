@@ -13,7 +13,7 @@ public class UserDbContext(DbContextOptions<UserDbContext> options) : DbContext(
 
         modelBuilder.Entity<Model.User>().HasKey(u => u.Id);
         modelBuilder.Entity<Model.User>().Property(p => p.Name).HasMaxLength(100).IsRequired();
-        modelBuilder.Entity<Model.User>().Property(p => p.ServiceModelIds);
+        modelBuilder.Entity<Model.User>().Property(p => p.ServiceModelId);
         modelBuilder.Entity<Model.User>().HasOne(u => u.Address).WithMany();
 
         modelBuilder.Entity<Model.Address>().HasKey(u => u.Id);

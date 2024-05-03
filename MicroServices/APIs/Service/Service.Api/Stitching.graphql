@@ -1,0 +1,3 @@
+﻿extend type User {
+	serviceModel: ServiceModel @delegate(path: "serviceModel(id: $fields:serviceModelId)")
+}

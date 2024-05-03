@@ -1,3 +1,3 @@
 namespace Service.Api.Requests;
 
-public record ServiceRequest(string Name, string Description);
+public record ServiceRequest(Guid Id, string Name, string Description);
