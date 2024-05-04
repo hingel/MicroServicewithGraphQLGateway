@@ -9,4 +9,5 @@ public interface IUserService
     Task<Db.Model.User?> GetUser(Guid id);
     Task<Db.Model.User?> UpdateUser(UpdateUserRequest request);
     Task<Db.Model.Address[]> GetAddress(string query);
+    Task<string> LogInUser(Guid userId);
 }
