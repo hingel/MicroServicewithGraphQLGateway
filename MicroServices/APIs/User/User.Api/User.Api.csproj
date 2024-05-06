@@ -27,4 +27,8 @@
     <ProjectReference Include="..\User.Db\User.Db.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="ObjectTypes\" />
+  </ItemGroup>
+
 </Project>

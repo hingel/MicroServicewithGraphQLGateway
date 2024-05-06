@@ -1,4 +1,8 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using Service.Api.ObjectTypes;
 using Service.Api.Query;
 using Service.Api.Requests;
 using Service.Api.Services;
@@ -6,13 +10,33 @@ using Service.Db.Database;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddAuthorization();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(
+    JwtBearerDefaults.AuthenticationScheme,
+    options =>
+    {
+        options.Audience = "exjobbGrapqhQl"; //Kan jag ta bort denna?
+        options.TokenValidationParameters = new TokenValidationParameters()
+        {
+            ValidateIssuer = true, //Kan jag ta bort denna?
+            ValidIssuer = "exjobbGrapqhQl",
+            ValidateAudience = true, //Kan jag ta bort denna?
+            ValidAudience = "exjobbGrapqhQl",
+            ValidateIssuerSigningKey = true,
+            IssuerSigningKeys = new List<SecurityKey> { new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SecretKeyFromOtherPlace!#¤%&/()=?")) },
+            ValidateLifetime = true
+        };
+    });
+
 var connectionString = builder.Configuration.GetConnectionString("MysqlConnectionString"); //Denna ska sättas med environment variabler istället
 
 builder.Services.AddDbContext<ServiceDbContext>(options => options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 builder.Services.AddScoped<IServiceService, ServiceModelService>();
 
 builder.Services.AddGraphQLServer()
+    .AddAuthorization()
     .AddQueryType<Query>()
+    .AddTypeExtension<ServiceExtensions>()
     .InitializeOnStartup()
     .PublishSchemaDefinition(s => 
         s.SetName("services")
@@ -27,8 +51,12 @@ if (app.Environment.IsDevelopment())
     await context.Database.EnsureCreatedAsync();
 }
 
+app.UseAuthentication();
+app.UseAuthorization();
+
 app.MapPost("/", async (ServiceRequest request, IServiceService service) => await service.AddServiceModel(request));
 app.MapGet("/", async (IServiceService service, string[] ids) => await service.GetServiceModelsByIds(ids.Select(Guid.Parse).ToArray()));
+
 
 app.MapGraphQL();
 

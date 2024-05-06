@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using User.Api.ObjectTypes;
 using User.Api.Query;
 using User.Api.Request;
 using User.Api.Services;
@@ -37,6 +38,7 @@ builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddGraphQLServer()
     .AddAuthorization()
     .AddQueryType<Query>()
+    .AddTypeExtension<UserExtensions>()
     .InitializeOnStartup()
     .PublishSchemaDefinition(s => s.SetName("users"));
 
