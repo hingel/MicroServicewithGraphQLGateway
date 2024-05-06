@@ -1,4 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.IdentityModel.Tokens.Jwt;
+using System.Security.Claims;
+using System.Text;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using User.Api.Request;
 using User.Db.Database;
 using User.Db.Model;
@@ -57,5 +61,23 @@ public class UserService(UserDbContext context) : IUserService
             || a.Country.ToLower().Contains(query.ToLower()));
 
         return addressToReturn.ToArrayAsync();
+    }
+
+    public async Task<string> LogInUser(Guid userId)
+    {
+        if (!await context.Users.AnyAsync(u => u.Id == userId)) return "User not found";
+
+        var subClaim = new Claim("sub", userId.ToString());
+        var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes("SecretKeyFromOtherPlace!#¤%&/()=?"));
+        var signingCredentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
+        var tokenOptions = new JwtSecurityToken(
+            issuer: "exjobbGrapqhQl",
+            audience: "exjobbGrapqhQl",
+            claims: new List<Claim>(){subClaim},
+            expires: DateTime.Now.AddDays(2),
+            signingCredentials: signingCredentials
+        );
+        var token = new JwtSecurityTokenHandler().WriteToken(tokenOptions);
+        return token;
     }
 }
