@@ -1,6 +1,7 @@
 ﻿using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Messages.User;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using User.Api.Request;
@@ -11,13 +12,13 @@ namespace User.Api.Services;
 
 public class UserService(UserDbContext context) : IUserService
 {
-    public async Task<Db.Model.User?> AddUser(AddUserRequest request)
+    public async Task<Db.Model.User?> AddUser(CreateUser message)
     {
-        var newUser = new Db.Model.User(request.Name, new Address(
-            request.AddressRequest.Street,
-            request.AddressRequest.City,
-            request.AddressRequest.PostalCode,
-            request.AddressRequest.Country));
+        var newUser = new Db.Model.User(message.Id, message.Name, new Address(
+            message.AddressRequest.Street,
+            message.AddressRequest.City,
+            message.AddressRequest.PostalCode,
+            message.AddressRequest.Country));
 
         context.Users.Add(newUser);
         await context.SaveChangesAsync();

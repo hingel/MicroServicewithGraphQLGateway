@@ -4,6 +4,7 @@ networks:
   user:
   service:
   gateway:
+  masstransitmq:
 
 services:
   graphql.gw:
@@ -19,6 +20,7 @@ services:
       - service.api
     networks:
       - gateway
+      - masstransitmq
 
   service.api:
     image: ${DOCKER_REGISTRY-}serviceapi
@@ -58,6 +60,7 @@ services:
     networks: 
       - user
       - gateway
+      - masstransitmq
     ports:
       - 53018:8080
       - 53019:8081
@@ -76,5 +79,15 @@ services:
     ports:
       - "3306:3306"
 
-
-
+  rabbitmq:
+    container_name: rabbitmq
+    hostname: rabbit
+    image: masstransit/rabbitmq:latest
+    ports:      
+     - "5672:5672"
+     - "15672:15672"
+    environment:
+        - RABBITMQ_DEFAULT_USER=guest
+        - RABBITMQ_DEFAULT_PASS=guest
+    networks:
+        - masstransitmq

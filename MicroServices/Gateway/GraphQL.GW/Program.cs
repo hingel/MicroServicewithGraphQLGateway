@@ -1,4 +1,7 @@
 using System.Text;
+using GraphQL.GW.Mutation;
+using GraphQL.GW.Service;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 
@@ -31,9 +34,26 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddHttpClient(users, c => ConfigureClient(c, builder, "http://user.api:8080/graphql"));
 builder.Services.AddHttpClient(services, c => ConfigureClient(c, builder, "http://service.api:8080/graphql"));
 
+builder.Services.AddScoped<PublishAndConsumeMessage>();
+
 builder.Services.AddGraphQLServer()
     .AddRemoteSchema(users)
-    .AddRemoteSchema(services);
+    .AddRemoteSchema(services)
+    .AddTypeExtension<Mutation>();
+
+builder.Services.AddMassTransit(x =>
+{
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host("rabbit", "/", h =>
+        {
+            h.Username("guest");
+            h.Password("guest");
+        });
+
+        cfg.ConfigureEndpoints(context);
+    });
+});
 
 var app = builder.Build();
 
