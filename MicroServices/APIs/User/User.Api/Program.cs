@@ -2,9 +2,10 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using MassTransit;
+using User.Api.Consumers;
 using User.Api.ObjectTypes;
 using User.Api.Query;
-using User.Api.Request;
 using User.Api.Services;
 using User.Db.Database;
 
@@ -42,6 +43,22 @@ builder.Services.AddGraphQLServer()
     .InitializeOnStartup()
     .PublishSchemaDefinition(s => s.SetName("users"));
 
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumer<CreateUserConsumer>();
+
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host("rabbit", "/", h =>
+        {
+            h.Username("guest");
+            h.Password("guest");
+        });
+
+        cfg.ConfigureEndpoints(context);
+    });
+});
+
 var app = builder.Build();
 
 if (app.Environment.IsDevelopment())
@@ -54,7 +71,7 @@ if (app.Environment.IsDevelopment())
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.MapPost("/", async (AddUserRequest request, IUserService service) => await service.AddUser(request));
+//app.MapPost("/", async (AddUserRequest request, IUserService service) => await service.AddUser(request));
 app.MapGet("/GetUsers", async (IUserService service, string[] ids) => await service.GetUsers(ids.Select(Guid.Parse).ToArray()));
 app.MapGet("/addresses/{query}", async (IUserService service, string query) => await service.GetAddress(query)).RequireAuthorization();
 app.MapGet("/login", async (IUserService service, string id) => await service.LogInUser(Guid.Parse(id)));

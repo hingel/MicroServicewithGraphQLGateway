@@ -11,7 +11,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="HotChocolate.AspNetCore" Version="13.9.0" />
+	<PackageReference Include="MassTransit" Version="8.2.2" />
+	<PackageReference Include="MassTransit.RabbitMQ" Version="8.2.2" />
+	<PackageReference Include="HotChocolate.AspNetCore" Version="13.9.0" />
     <PackageReference Include="HotChocolate.AspNetCore.Authorization" Version="13.9.0" />
     <PackageReference Include="HotChocolate.Stitching" Version="13.9.0" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.JwtBearer" Version="8.0.4" />
@@ -24,10 +26,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\Messages\Messages.csproj" />
     <ProjectReference Include="..\User.Db\User.Db.csproj" />
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Consumers\" />
     <Folder Include="ObjectTypes\" />
   </ItemGroup>
 

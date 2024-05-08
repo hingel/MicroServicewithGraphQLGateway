@@ -23,7 +23,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GraphQL.GW", "MicroServices
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "User.Db", "MicroServices\APIs\User\User.Db\User.Db.csproj", "{EB9D9A0B-A062-4F7B-9559-B9E7C191063B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Service.Db", "MicroServices\APIs\Service\Service.Db\Service.Db.csproj", "{48664059-9F3E-4BFF-9592-0304747A34A5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Service.Db", "MicroServices\APIs\Service\Service.Db\Service.Db.csproj", "{48664059-9F3E-4BFF-9592-0304747A34A5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Messages", "Messages\Messages.csproj", "{04CB45CF-FCEA-4C3F-97C9-60E5B769D52E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,6 +57,10 @@ Global
 		{48664059-9F3E-4BFF-9592-0304747A34A5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{48664059-9F3E-4BFF-9592-0304747A34A5}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{48664059-9F3E-4BFF-9592-0304747A34A5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{04CB45CF-FCEA-4C3F-97C9-60E5B769D52E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{04CB45CF-FCEA-4C3F-97C9-60E5B769D52E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{04CB45CF-FCEA-4C3F-97C9-60E5B769D52E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{04CB45CF-FCEA-4C3F-97C9-60E5B769D52E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

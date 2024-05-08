@@ -7,8 +7,13 @@ namespace Service.Api.Services;
 
 public class ServiceModelService(ServiceDbContext context) : IServiceService
 {
-    public async Task<ServiceModel> AddServiceModel(ServiceRequest request)
+    public async Task<ServiceModel?> AddServiceModel(ServiceRequest request)
     {
+        var existingModel = await context.ServiceModels.FirstOrDefaultAsync(s => s.Id == request.Id);
+        if (existingModel != null) return existingModel;
+
+        if (await context.ServiceModels.AnyAsync(s => s.Name == request.Name)) return null;
+
         var newServiceModel = new ServiceModel(request.Id, request.Name, request.Description);
 
         context.ServiceModels.Add(newServiceModel);
