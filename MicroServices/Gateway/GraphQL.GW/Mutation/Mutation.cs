@@ -5,10 +5,9 @@ namespace GraphQL.GW.Mutation;
 
 public class Mutation
 {
-    public async Task<string> CreateUser([Service] PublishAndConsumeMessage publishAndConsumeMessage, AddUserRequest request)
-    {
-        await publishAndConsumeMessage.Run(request);
+    public async Task<string> CreateUser([Service] PublishCreateUser publishCreateUser, AddUserRequest request) => 
+        await publishCreateUser.PublishMessage(request);
 
-        return "CreateUserRequest sent."; //TODO: Hade velat returnera en User istället?
-    }
+    public async Task<string> CreateService([Service] PublishCreateServiceModel publishCreateService, 
+        AddServiceModelRequest request) => await publishCreateService.PublishMessage(request);
 }

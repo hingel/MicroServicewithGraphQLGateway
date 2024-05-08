@@ -1,7 +1,9 @@
 using System.Text;
+using MassTransit;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Service.Api.Consumer;
 using Service.Api.ObjectTypes;
 using Service.Api.Query;
 using Service.Api.Requests;
@@ -41,6 +43,22 @@ builder.Services.AddGraphQLServer()
     .PublishSchemaDefinition(s => 
         s.SetName("services")
             .AddTypeExtensionsFromFile("./Stitching.graphql"));
+
+builder.Services.AddMassTransit(x =>
+{
+    x.AddConsumer<CreateServiceConsumer>();
+
+    x.UsingRabbitMq((context, cfg) =>
+    {
+        cfg.Host("rabbit", "/", h =>
+        {
+            h.Username("guest");
+            h.Password("guest");
+        });
+
+        cfg.ConfigureEndpoints(context);
+    });
+});
 
 var app = builder.Build();
 

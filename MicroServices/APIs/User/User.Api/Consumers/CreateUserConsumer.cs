@@ -4,20 +4,18 @@ using User.Api.Services;
 
 namespace User.Api.Consumers;
 
-public class CreateUserConsumer(IUserService service, IPublishEndpoint publishEndpoint) : IConsumer<CreateUser>
+public class CreateUserConsumer(IUserService service) : IConsumer<CreateUser>
 {
     public async Task Consume(ConsumeContext<CreateUser> context)
     {
-        //Skulle kunna lägga till Usern här direkt egentligen till cd context, blir någon halvstruktur.
-
         var result = await service.AddUser(context.Message);
 
         if (result == null)
         {
-            await publishEndpoint.Publish(new CreateUserAborted("not created"));
+            await context.RespondAsync(new CreateUserAborted(context.Message.Id ,"not created"));
             return;
         }
 
-        await publishEndpoint.Publish(new UserCreated(result.Id, null));
+        await context.RespondAsync(new UserCreated(result.Id));
     }
 }

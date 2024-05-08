@@ -14,11 +14,20 @@ public class UserService(UserDbContext context) : IUserService
 {
     public async Task<Db.Model.User?> AddUser(CreateUser message)
     {
+        var user = await context.Users.FirstOrDefaultAsync(u => u.Id == message.Id);
+
+        if (user != null) return user;
+
+        if (await context.Users.AnyAsync(u => u.Name.ToLower() == message.Name.ToLower())) return null;
+
         var newUser = new Db.Model.User(message.Id, message.Name, new Address(
             message.AddressRequest.Street,
             message.AddressRequest.City,
             message.AddressRequest.PostalCode,
-            message.AddressRequest.Country));
+            message.AddressRequest.Country))
+        {
+            ServiceModelId = message.ServiceModelId
+        };
 
         context.Users.Add(newUser);
         await context.SaveChangesAsync();
@@ -53,7 +62,7 @@ public class UserService(UserDbContext context) : IUserService
         return userToUpdate;
     }
 
-    public Task<Address[]> GetAddress(string query)
+    public async Task<Address[]> GetAddress(string query)
     {
         var addressToReturn = context.Addresses.Where(a =>
             a.City.ToLower().Contains(query.ToLower()) 
@@ -61,7 +70,7 @@ public class UserService(UserDbContext context) : IUserService
             || a.PostalCode.ToLower().Contains(query.ToLower())
             || a.Country.ToLower().Contains(query.ToLower()));
 
-        return addressToReturn.ToArrayAsync();
+        return await addressToReturn.ToArrayAsync();
     }
 
     public async Task<string> LogInUser(Guid userId)
