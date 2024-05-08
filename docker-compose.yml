@@ -1,15 +1,94 @@
 version: '3.4'
 
+networks:
+  user:
+  service:
+  gateway:
+  masstransitmq:
+
 services:
+  graphql.gw:
+    image: ${DOCKER_REGISTRY-}graphqlgw
+    build:
+      context: .
+      dockerfile: MicroServices/Gateway/GraphQL.GW/Dockerfile
+    ports:
+      - "5005:8080"
+      - "5005:8081"
+    depends_on:
+      - user.api
+      - service.api
+    networks:
+      - gateway
+      - masstransitmq
+
   service.api:
     image: ${DOCKER_REGISTRY-}serviceapi
     build:
       context: .
       dockerfile: MicroServices/APIs/Service/Service.Api/Dockerfile
+    depends_on:
+      - service.db
+    networks:
+      - service
+      - gateway
+      - masstransitmq
+    ports:
+      - 53016:8080
+      - 53017:8081
+  
+  service.db:
+    container_name: servicedb
+    image: mysql
+    networks:
+      - service
+    environment:
+        MYSQL_RANDOM_ROOT_PASSWORD: 1
+        MYSQL_DATABASE: accountowner
+        MYSQL_USER: dbservice
+        MYSQL_PASSWORD: dbservicepasswordd
+    restart: always
+    ports:
+      - "3307:3306"
 
   user.api:
     image: ${DOCKER_REGISTRY-}userapi
     build:
       context: .
       dockerfile: MicroServices/APIs/User/User.Api/Dockerfile
+    depends_on:
+      - user.db
+    networks: 
+      - user
+      - gateway
+      - masstransitmq
+    ports:
+      - 53018:8080
+      - 53019:8081
 
+  user.db:
+    container_name: userdb 
+    image: mysql
+    networks:
+      - user
+    environment:
+        MYSQL_RANDOM_ROOT_PASSWORD: 1
+        MYSQL_DATABASE: accountowner
+        MYSQL_USER: dbuser
+        MYSQL_PASSWORD: dbuserpasswordd
+    restart: always
+    ports:
+      - "3306:3306"
+
+  rabbitmq:
+    container_name: rabbitmq
+    hostname: rabbit
+    image: masstransit/rabbitmq:latest
+    ports:      
+     - "5672:5672"
+     - "15672:15672"
+    environment:
+        - RABBITMQ_DEFAULT_USER=guest
+        - RABBITMQ_DEFAULT_PASS=guest
+    networks:
+        - masstransitmq
