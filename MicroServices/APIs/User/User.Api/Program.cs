@@ -46,6 +46,7 @@ builder.Services.AddGraphQLServer()
 builder.Services.AddMassTransit(x =>
 {
     x.AddConsumer<CreateUserConsumer>();
+    x.AddConsumer<UpdateUserConsumer>();
 
     x.UsingRabbitMq((context, cfg) =>
     {
@@ -73,7 +74,6 @@ app.UseAuthorization();
 
 //app.MapPost("/", async (AddUserRequest request, IUserService service) => await service.AddUser(request));
 app.MapGet("/GetUsers", async (IUserService service, string[] ids) => await service.GetUsers(ids.Select(Guid.Parse).ToArray()));
-app.MapGet("/addresses/{query}", async (IUserService service, string query) => await service.GetAddress(query)).RequireAuthorization();
 app.MapGet("/login", async (IUserService service, string id) => await service.LogInUser(Guid.Parse(id)));
 
 app.MapGraphQL();
