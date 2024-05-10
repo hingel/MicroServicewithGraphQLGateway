@@ -35,6 +35,7 @@ builder.Services.AddHttpClient(users, c => ConfigureClient(c, builder, "http://u
 builder.Services.AddHttpClient(services, c => ConfigureClient(c, builder, "http://service.api:8080/graphql"));
 
 builder.Services.AddScoped<PublishCreateUser>();
+builder.Services.AddScoped<PublishUpdateUser>();
 builder.Services.AddScoped<PublishCreateServiceModel>();
 
 builder.Services.AddGraphQLServer()
