@@ -6,7 +6,7 @@ namespace GraphQL.GW.Service;
 
 public class PublishCreateUser(IHttpContextAccessor context, IRequestClient<CreateUser> client)
 {
-    public async Task<string> PublishMessage(AddUserRequest request)
+    public async Task<string> PublishMessage(UserRequest request)
     {
         var token = context.HttpContext!.Request.Headers.FirstOrDefault(h => h.Key == "Authorization");
 
@@ -21,6 +21,6 @@ public class PublishCreateUser(IHttpContextAccessor context, IRequestClient<Crea
             request.AddressRequest.Country),
         request.ServiceModelId), source.Token); 
         
-        return response.Message.GetType() == typeof(CreateUserAborted) ? "User Not created" : $"CreateUserRequest {request.Id} created.";
+        return response.Message.GetType() == typeof(CreateUserAborted) ? "User Not created" : $"User {request.Id} created.";
     }
 }

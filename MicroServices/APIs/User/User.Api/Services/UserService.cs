@@ -4,7 +4,6 @@ using System.Text;
 using Messages.User;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using User.Api.Request;
 using User.Db.Database;
 using User.Db.Model;
 
@@ -20,11 +19,12 @@ public class UserService(UserDbContext context) : IUserService
 
         if (await context.Users.AnyAsync(u => u.Name.ToLower() == message.Name.ToLower())) return null;
 
-        var newUser = new Db.Model.User(message.Id, message.Name, new Address(
+        var newUser = new Db.Model.User(message.Id, message.Name, 
+            message.AddressRequest != null ? new Address(
             message.AddressRequest.Street,
             message.AddressRequest.City,
             message.AddressRequest.PostalCode,
-            message.AddressRequest.Country))
+            message.AddressRequest.Country) : null)
         {
             ServiceModelId = message.ServiceModelId
         };
@@ -43,36 +43,25 @@ public class UserService(UserDbContext context) : IUserService
     public async Task<Db.Model.User?> GetUser(Guid id) =>
         await context.Users.Include(u => u.Address).FirstOrDefaultAsync(u => u.Id == id);
 
-    public async Task<Db.Model.User?> UpdateUser(UpdateUserRequest request)
+    public async Task<Db.Model.User?> UpdateUser(UpdateUser message)
     {
-        var userToUpdate = await context.Users.Include(u => u.Address).FirstOrDefaultAsync(u => u.Id == request.UserId);
+        var userToUpdate = await context.Users.Include(u => u.Address).FirstOrDefaultAsync(u => u.Id == message.Id);
 
         if (userToUpdate == null) return null;
 
-        if (request.AddressRequest != null)
+        if (message.AddressRequest != null)
         {
-            userToUpdate.Address = new Address(request.AddressRequest.Street, request.AddressRequest.City,
-                request.AddressRequest.PostalCode, request.AddressRequest.Country);
+            userToUpdate.Address = new Address(message.AddressRequest.Street, message.AddressRequest.City,
+                message.AddressRequest.PostalCode, message.AddressRequest.Country);
         }
 
-        userToUpdate.ServiceModelId = request.ServiceModelId.GetValueOrDefault();
-        userToUpdate.Name = !string.IsNullOrEmpty(request.Name) ? request.Name : userToUpdate.Name;
+        userToUpdate.ServiceModelId = message.ServiceModelId.GetValueOrDefault();
+        userToUpdate.Name = !string.IsNullOrEmpty(message.Name) ? message.Name : userToUpdate.Name;
 
         await context.SaveChangesAsync();
         return userToUpdate;
     }
-
-    public async Task<Address[]> GetAddress(string query)
-    {
-        var addressToReturn = context.Addresses.Where(a =>
-            a.City.ToLower().Contains(query.ToLower()) 
-            || a.Street.ToLower().Contains(query.ToLower())
-            || a.PostalCode.ToLower().Contains(query.ToLower())
-            || a.Country.ToLower().Contains(query.ToLower()));
-
-        return await addressToReturn.ToArrayAsync();
-    }
-
+    
     public async Task<string> LogInUser(Guid userId)
     {
         if (!await context.Users.AnyAsync(u => u.Id == userId)) return "User not found";
