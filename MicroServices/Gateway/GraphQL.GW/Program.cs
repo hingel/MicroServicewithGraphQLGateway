@@ -15,12 +15,12 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJw
     JwtBearerDefaults.AuthenticationScheme,
     options =>
     {
-        options.Audience = "exjobbGrapqhQl"; //Kan jag ta bort denna?
+        options.Audience = "exjobbGrapqhQl";
         options.TokenValidationParameters = new TokenValidationParameters()
         {
-            ValidateIssuer = true, //Kan jag ta bort denna?
+            ValidateIssuer = true,
             ValidIssuer = "exjobbGrapqhQl",
-            ValidateAudience = true, //Kan jag ta bort denna?
+            ValidateAudience = true,
             ValidAudience = "exjobbGrapqhQl",
             ValidateIssuerSigningKey = true,
             IssuerSigningKeys = new List<SecurityKey>

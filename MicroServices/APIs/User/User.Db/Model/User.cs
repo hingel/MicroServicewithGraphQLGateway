@@ -2,10 +2,6 @@
 
 public class User(Guid id, string name, Address? address)
 {
-    public User(Guid id, string name) : this(id, name, null!) //Försök dubbelkolla om detta är relevant?
-    {
-    }
-
     public Guid Id { get; } = id;
     public string Name { get; set; } = name;
     public Address? Address { get; set; } = address;

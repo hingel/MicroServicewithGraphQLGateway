@@ -10,7 +10,7 @@ public class PublishUpdateUser(IHttpContextAccessor context, IRequestClient<Upda
     {
         var token = context.HttpContext!.Request.Headers.FirstOrDefault(h => h.Key == "Authorization");
 
-        if (string.IsNullOrEmpty(token.Value)) return "Not authorized"; //Kan göra en check här istället, för att kolla om användaren har rättigheter att skapa en user.
+        if (string.IsNullOrEmpty(token.Value)) return "Not authorized"; //Ingen kontroll, men går att implementera här eller mha separat metod.
 
         using var source = new CancellationTokenSource(TimeSpan.FromSeconds(15));
 
