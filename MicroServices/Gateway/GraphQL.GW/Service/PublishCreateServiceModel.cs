@@ -10,7 +10,7 @@ public class PublishCreateServiceModel(IRequestClient<CreateServiceModel> client
     {
         var token = httpContextAccessor.HttpContext!.Request.Headers.FirstOrDefault(h => h.Key == "Authorization");
 
-        if (string.IsNullOrEmpty(token.Value)) return "Not authorized"; //Kan göra en check här istället, för att kolla om användaren har rättigheter att skapa en user.
+        if (string.IsNullOrEmpty(token.Value)) return "Not authorized"; //Ingen kontroll, men går att implementera här eller mha separat metod.
 
         using var source = new CancellationTokenSource(TimeSpan.FromSeconds(15));
         var response = await client.GetResponse<ServiceModelCreated, CreateServiceModelAborted>(new CreateServiceModel(request.Id, request.Name, request.Description), source.Token);
